@@ -1,0 +1,48 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Puzzle {
+  id          String       @id @default(cuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  letters     String?
+  submissions Submission[]
+}
+
+model Student {
+  id           String        @id @default(cuid())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  email        String?
+  name         String?
+  submissions  Submission[]
+  leaderboards Leaderboard[]
+}
+
+model Leaderboard {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  word      String?
+  score     Int?
+  student   Student? @relation(fields: [studentId], references: [id])
+  studentId String?
+}
+
+model Submission {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  word      String?
+  score     Int?
+  student   Student? @relation(fields: [studentId], references: [id])
+  studentId String?
+  puzzle    Puzzle?  @relation(fields: [puzzleId], references: [id])
+  puzzleId  String?
+}
